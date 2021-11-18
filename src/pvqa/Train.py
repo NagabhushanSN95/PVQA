@@ -132,10 +132,10 @@ def demo1():
 
 
 def demo2():
-    features_dirpath = Path('../../Data/PVQA_Features/InceptionV3')
+    features_dirpath = Path('../../Data/PVQA_Features/ResNet50')
     mos_filepath = Path('../../Data/MOS.csv')
     tts_filepath = Path('../../Data/TrainTestSplit.csv')
-    output_filepath = Path('../../TimingAnalysis/SplitsRun/Run03/Scores.csv')
+    output_filepath = Path('../../Runs/SplitsRun/Run01/Scores.csv')
     num_splits = 100
 
     if output_filepath and output_filepath.exists():
