@@ -10,6 +10,9 @@ The database can be downloaded from the [project webpage](https://nagabhushansn9
 4. Run `demo1()` method in `Train.py` file to train model. The trained model will be saved in `Trained_Models`.
 5. Additionally, `demo2()` method in `Train.py` can be used to evaluate the model on 100 splits and compute median scores of PLCC, SROCC and RMSE.
 
+### Pretrained Models:
+Our Model and Baseline Models pretrained on our database are available [here](https://drive.google.com/drive/folders/16cxow_Yf4peFedHCXS8EyvZ07OQ9AMEm?usp=sharing).
+
 ### Testing:
 1. To compute the quality score of a single video, use `demo1()` method in `Test.py`, by specifying the path to the video.
 2. To compute the quality scores of multiple videos, place all the videos in a single directory and use the method `demo2()` in `Test.py`.
