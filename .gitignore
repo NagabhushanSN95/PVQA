@@ -2,3 +2,9 @@
 !.idea/.gitignore
 __pycache__/
 *.pyc
+Data/PVQA_Features/*/*.npy
+Data/SSA_Features/*/*.npy
+Data/Predicted_Videos
+Data/MOS.csv
+Runs/*
+Trained_Models/

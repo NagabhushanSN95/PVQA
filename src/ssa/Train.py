@@ -1,8 +1,8 @@
 # Shree KRISHNAya Namaha
-# Trains Video Naturalness Evaluator and saves the trained model
+# Trains SSA Baseline Model and saves the trained model
 # Features must be extracted before running this file
 # Author: Nagabhushan S N
-# Last Modified: 05-05-2020
+# Last Modified: 18-11-2021
 
 import datetime
 import time
@@ -20,7 +20,7 @@ from sklearn.linear_model import LinearRegression
 from utils import CommonUtils
 
 
-class VineModel:
+class SsaModel:
     """
     Defines train, test functions
     """
@@ -78,12 +78,12 @@ class VineModel:
 
     @staticmethod
     def load_model(model_dirpath: Path):
-        vine_model = VineModel()
+        ssa_model = SsaModel()
         pca_save_path = model_dirpath / 'PCA.joblib'
         lr_save_path = model_dirpath / 'LinearRegression.joblib'
-        vine_model.pca = joblib.load(pca_save_path)
-        vine_model.regressor = joblib.load(lr_save_path)
-        return vine_model
+        ssa_model.pca = joblib.load(pca_save_path)
+        ssa_model.regressor = joblib.load(lr_save_path)
+        return ssa_model
 
 
 def save_configs(output_dirpath: Path, configs: dict):
@@ -107,7 +107,7 @@ def demo1():
     configs = {
         'backbone_network': 'ResNet50',
         'root_dirpath': root_dirpath,
-        'features_dirpath': root_dirpath / 'Data/VINE_Features',
+        'features_dirpath': root_dirpath / 'Data/SSA_Features',
         'mos_filepath': root_dirpath / 'Data/MOS.csv',
         'model_save_dirpath': root_dirpath / 'Trained_Models',
         'seed': 1,
@@ -115,7 +115,7 @@ def demo1():
     backbone_network = configs['backbone_network']
     features_dirpath = configs['features_dirpath'] / backbone_network
     mos_filepath = configs['mos_filepath']
-    model_save_dirpath = configs['model_save_dirpath'] / f'VINE_{backbone_network}'
+    model_save_dirpath = configs['model_save_dirpath'] / f'SSA_{backbone_network}'
     model_save_dirpath.mkdir(parents=True, exist_ok=False)
     seed = configs['seed']
     save_configs(model_save_dirpath, configs)
@@ -125,17 +125,17 @@ def demo1():
     features, scores = CommonUtils.collect_features(features_dirpath, subjective_data)
     train_videos = subjective_data['Video Name'].to_numpy()
 
-    vine_model = VineModel()
-    vine_model.train(features, subjective_data, train_videos)
-    vine_model.save_model(model_save_dirpath)
+    ssa_model = SsaModel()
+    ssa_model.train(features, subjective_data, train_videos)
+    ssa_model.save_model(model_save_dirpath)
     return
 
 
 def demo2():
-    features_dirpath = Path('../../Data/VINE_Features/InceptionV3')
+    features_dirpath = Path('../../Data/SSA_Features/ResNet50')
     mos_filepath = Path('../../Data/MOS.csv')
     tts_filepath = Path('../../Data/TrainTestSplit.csv')
-    output_filepath = Path('../../TimingAnalysis/SplitsRun/Run03/Scores.csv')
+    output_filepath = Path('../../TimingAnalysis/SplitsRun/Run04/Scores.csv')
     num_splits = 100
 
     if output_filepath and output_filepath.exists():
@@ -154,10 +154,10 @@ def demo2():
         train_videos = split_data['Video Names']['Train']
         test_videos = split_data['Video Names']['Test']
 
-        vine_model = VineModel()
-        vine_model.train(features, subjective_data, train_videos)
-        train_scores, train_metrics = vine_model.test(features, subjective_data, train_videos)
-        test_scores, test_metrics = vine_model.test(features, subjective_data, test_videos)
+        ssa_model = SsaModel()
+        ssa_model.train(features, subjective_data, train_videos)
+        train_scores, train_metrics = ssa_model.test(features, subjective_data, train_videos)
+        test_scores, test_metrics = ssa_model.test(features, subjective_data, test_videos)
         print(f'{i + 1:03}: Train PLCC: {train_metrics[0]}; Test PLCC: {test_metrics[0]}')
         print(f'{i + 1:03}: Train SROCC: {train_metrics[1]}; Test SROCC: {test_metrics[1]}')
         print(f'{i + 1:03}: Train RMSE: {train_metrics[2]}; Test RMSE: {test_metrics[2]}')
