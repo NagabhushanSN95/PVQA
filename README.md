@@ -1,5 +1,9 @@
 # PVQA
-Official Code Release of the paper "Understanding the Understanding the Perceived Quality of Video Predictions"
+Official Code Release of the paper "[Understanding the Understanding the Perceived Quality of Video Predictions](https://arxiv.org/abs/2005.00356)".
+The database can be downloaded from the [project webpage](https://sites.google.com/site/nagabhushansn95/publications/vine).
+
+## Video Naturalness Evaluation Model
+To evaluate the naturalness of a video or to train a naturalness evaluation model, please read the documentation [here](./VideoNaturalnessEvaluator/ReadMe.md).
 
 ## License
 Copyright 2020 Nagabhushan Somraj
