@@ -9,13 +9,14 @@ from pathlib import Path
 
 import numpy
 import pandas
-import tensorflow as tf
 
 
 def init_seeds(seed: int = 1):
     os.environ['PYTHONHASHSEED'] = str(seed)
     random.seed(seed)
     numpy.random.seed(seed)
+
+    import tensorflow as tf
     tf.random.set_seed(seed)
     return
 
