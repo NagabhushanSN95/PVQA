@@ -14,7 +14,7 @@ import pandas
 import skvideo.io
 
 import FeatureExtractor
-from Train import PvqaModel
+from pvqa.PVQA import PvqaModel
 
 
 def demo1():
