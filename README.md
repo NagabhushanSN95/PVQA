@@ -17,8 +17,6 @@ Our Model and Baseline Models pretrained on our database are available [here](ht
 1. To compute the quality score of a single video, use `demo1()` method in `Test.py`, by specifying the path to the video.
 2. To compute the quality scores of multiple videos, place all the videos in a single directory and use the method `demo2()` in `Test.py`.
 
-If you use our PVQA model in your publication, please specify the vrsion you are using. The current version is 1.2.
-
 ## License
 Copyright 2020 Nagabhushan Somraj
 
