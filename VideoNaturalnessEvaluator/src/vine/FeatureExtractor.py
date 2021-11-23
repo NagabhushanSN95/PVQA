@@ -1,7 +1,7 @@
 # Shree KRISHNAya Namaha
 # Extracts MCS and RFD features
 # Author: Nagabhushan S N
-# Last Modified: 18-11-2021
+# Last Modified: 14-03-2021
 
 import abc
 import datetime
@@ -135,7 +135,7 @@ class RfdFeaturesComputer:
         return rfd_features
 
 
-class PvqaFeaturesComputer:
+class VineFeaturesComputer:
     def __init__(self, backbone_network: str = 'ResNet50'):
         self.deep_features_extractor = self.get_deep_features_extractor(backbone_network)
         self.mcs_features_computer = McsFeaturesComputer()
@@ -154,7 +154,7 @@ class PvqaFeaturesComputer:
             raise RuntimeError(f'Unknown backbone network: {network}')
         return deep_features_extractor
 
-    def compute_pvqa_features(self, video: numpy.ndarray) -> numpy.ndarray:
+    def compute_vine_features(self, video: numpy.ndarray) -> numpy.ndarray:
         rfd_video = self.rfd_features_computer.compute_rfd_video(video)
 
         video_features = self.deep_features_extractor.compute_features(video)
@@ -167,14 +167,14 @@ class PvqaFeaturesComputer:
 
 
 def extract_features(videos_dirpath: Path, backbone_network: str, output_dirpath: Path):
-    features_computer = PvqaFeaturesComputer(backbone_network)
+    features_computer = VineFeaturesComputer(backbone_network)
     output_dirpath = output_dirpath / backbone_network
     output_dirpath.mkdir(parents=True, exist_ok=False)
     print('Computing MCS and RFD features')
     for video_path in tqdm(sorted(videos_dirpath.iterdir())):
         video_name = video_path.stem
         video = skvideo.io.vread(video_path.as_posix())
-        all_features = features_computer.compute_pvqa_features(video)
+        all_features = features_computer.compute_vine_features(video)
 
         output_filepath = output_dirpath / f'{video_name}.npy'
         numpy.save(output_filepath.as_posix(), all_features)
@@ -186,7 +186,7 @@ def demo1():
     root_dirpath = Path('../../')
     videos_dirpath = root_dirpath / 'Data/Predicted_Videos'
     backbone_network = 'ResNet50'
-    output_dirpath = root_dirpath / 'Data/PVQA_Features'
+    output_dirpath = root_dirpath / 'Data/VINE_Features'
     extract_features(videos_dirpath, backbone_network, output_dirpath)
     return
 
