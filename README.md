@@ -1,5 +1,5 @@
 # PVQA - Predicted Videos Quality Assessment
-Official Code Release of the paper "[Understanding the Understanding the Perceived Quality of Video Predictions](https://arxiv.org/abs/2005.00356)".
+Official Code Release of the paper "[Understanding the Perceived Quality of Video Predictions](https://arxiv.org/abs/2005.00356)".
 The database can be downloaded from the [project webpage](https://nagabhushansn95.github.io/publications/2020/pvqa.html).
 
 ## How to use:
