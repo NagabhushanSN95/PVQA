@@ -1,7 +1,7 @@
 # Shree KRISHNAya Namaha
-# Runs the model and predicts naturalness scores
+# Runs the SSA baseline model and predicts the quality scores
 # Author: Nagabhushan S N
-# Last Modified: 14-03-2021
+# Last Modified: 18-11-2021
 
 import datetime
 import json
@@ -20,7 +20,7 @@ from ssa.Train import SsaModel
 
 def demo1():
     """
-    Computes Naturalness Score for a single video
+    Computes quality score for a single video
     :return:
     """
     model_dirpath = Path('../../Trained_Models/SSA_ResNet50')
@@ -35,7 +35,7 @@ def demo1():
     video = skvideo.io.vread(video_path.as_posix())
     all_features = features_computer.compute_ssa_features(video)
     score = ssa_model.predict(all_features).squeeze()
-    print(f'Predicted Naturalness Score: {score:0.04f}')
+    print(f'Predicted Quality Score: {score:0.04f}')
     return
 
 
@@ -55,8 +55,8 @@ def demo2():
         video_name = video_path.stem
         start_time1 = time.time()
         video = skvideo.io.vread(video_path.as_posix())
-        vine_features = features_computer.compute_ssa_features(video)
-        score = ssa_model.predict(vine_features)
+        pvqa_features = features_computer.compute_ssa_features(video)
+        score = ssa_model.predict(pvqa_features)
         end_time1 = time.time()
         time_taken = end_time1 - start_time1
         print(f'{video_name}: {score:0.04f}; Time Taken: {time_taken}')
@@ -64,7 +64,7 @@ def demo2():
     pred_data = pandas.DataFrame(pred_scores, columns=['Video Name', 'Predicted Score', 'Execution Time'])
     avg_score = numpy.mean(pred_data['Predicted Score'])
     avg_time = numpy.mean(pred_data['Execution Time'])
-    print(f'Average Naturalness Score: {avg_score:0.04f}; Average Execution Time: {avg_time}')
+    print(f'Average Quality Score: {avg_score:0.04f}; Average Execution Time: {avg_time}')
 
     output_path.parent.mkdir(parents=True, exist_ok=False)
     pred_data.to_csv(output_path, index=False)
@@ -94,8 +94,8 @@ def demo3():
         video_name = video_path.stem
         start_time1 = time.time()
         video = skvideo.io.vread(video_path.as_posix())
-        vine_features = features_computer.get_features(video)
-        score = ssa_model.predict(vine_features)
+        pvqa_features = features_computer.get_features(video)
+        score = ssa_model.predict(pvqa_features)
         end_time1 = time.time()
         time_taken = end_time1 - start_time1
         print(f'{video_name}: {score:0.04f}; Time Taken: {time_taken}')
@@ -103,7 +103,7 @@ def demo3():
     pred_data = pandas.DataFrame(pred_scores, columns=['Video Name', 'Predicted Score', 'Execution Time'])
     avg_score = numpy.mean(pred_data['Predicted Score'])
     avg_time = numpy.mean(pred_data['Execution Time'])
-    print(f'Average Naturalness Score: {avg_score:0.04f}; Average Execution Time: {avg_time}')
+    print(f'Average Quality Score: {avg_score:0.04f}; Average Execution Time: {avg_time}')
 
     output_path.parent.mkdir(parents=True, exist_ok=False)
     pred_data.to_csv(output_path, index=False)

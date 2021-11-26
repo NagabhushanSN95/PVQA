@@ -1,8 +1,8 @@
 # Shree KRISHNAya Namaha
-# Trains Video Naturalness Evaluator and saves the trained model
+# Trains SSA Baseline Model and saves the trained model
 # Features must be extracted before running this file
 # Author: Nagabhushan S N
-# Last Modified: 05-05-2020
+# Last Modified: 18-11-2021
 
 import datetime
 import time
