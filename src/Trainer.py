@@ -2,7 +2,7 @@
 # Trains PVQA Models and saves the trained model
 # Features must be extracted before running this file
 # Author: Nagabhushan S N
-# Last Modified: 14-12-2021
+# Last Modified: 14/01/2022
 
 import datetime
 import time
@@ -54,6 +54,7 @@ def demo1():
     #     'model_name': 'CNN_TP',
     #     'data_loader_name': 'PVQA',
     #     'num_frames': 20,
+    #     'num_context_frames': 4,
     #     'num_time_splits': 4,
     #     'kernel_size': 5,
     #     'num_filters': 100,
@@ -98,23 +99,24 @@ def demo2():
         'num_principal_components': 240,
         'seed': 1,
     }
-    configs = {
-        'features_dirpath': 'Data/PVQA/Features',
-        'mos_filepath': 'Data/PVQA/MOS.csv',
-        'tts_filepath': 'Data/PVQA/TrainTestSplit.csv',
-        'num_splits': 100,
-        'output_dirpath': 'Runs/SplitsRun/Run04',
-        'backbone_network': 'ResNet50',
-        'features': 'MCS_RFD',
-        'model_name': 'CNN_TP',
-        'data_loader_name': 'PVQA',
-        'num_frames': 20,
-        'num_time_splits': 4,
-        'kernel_size': 5,
-        'num_filters': 100,
-        'num_epochs': 200,
-        'seed': 1,
-    }
+    # configs = {
+    #     'features_dirpath': 'Data/PVQA/Features',
+    #     'mos_filepath': 'Data/PVQA/MOS.csv',
+    #     'tts_filepath': 'Data/PVQA/TrainTestSplit.csv',
+    #     'num_splits': 100,
+    #     'output_dirpath': 'Runs/SplitsRun/Run04',
+    #     'backbone_network': 'ResNet50',
+    #     'features': 'MCS_RFD',
+    #     'model_name': 'CNN_TP',
+    #     'data_loader_name': 'PVQA',
+    #     'num_frames': 20,
+    #     'num_context_frames': 4,
+    #     'num_time_splits': 4,
+    #     'kernel_size': 5,
+    #     'num_filters': 100,
+    #     'num_epochs': 200,
+    #     'seed': 1,
+    # }
 
     tts_filepath = root_dirpath / configs['tts_filepath']
     output_dirpath = root_dirpath / configs['output_dirpath']

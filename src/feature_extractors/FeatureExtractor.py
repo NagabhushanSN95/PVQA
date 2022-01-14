@@ -1,7 +1,7 @@
 # Shree KRISHNAya Namaha
 # Extracts SSA, MCS and RFD features
 # Author: Nagabhushan S N
-# Last Modified: 13-12-2021
+# Last Modified: 14/01/2022
 
 import abc
 import datetime
@@ -118,8 +118,8 @@ class McsFeaturesComputer:
         cosine_features = self.spatial_cosine_sim(features1, matched_features)
         return cosine_features
 
-    def compute_mcs_features(self, video_features: numpy.ndarray) -> numpy.ndarray:
-        mcs_features = self.matched_cosine_sim(video_features[3:4], video_features)
+    def compute_mcs_features(self, video_features: numpy.ndarray, lc: int) -> numpy.ndarray:
+        mcs_features = self.matched_cosine_sim(video_features[lc-1:lc], video_features)
         return mcs_features
 
 
@@ -163,14 +163,15 @@ class PvqaFeaturesComputer:
             raise RuntimeError(f'Unknown backbone network: {network}')
         return deep_features_extractor
 
-    def compute_pvqa_features(self, video: numpy.ndarray) -> Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]:
+    def compute_pvqa_features(self, video: numpy.ndarray, num_context_frames: int = 4) -> \
+            Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]:
         rfd_video = self.rfd_features_computer.compute_rfd_video(video)
 
         video_features = self.deep_features_extractor.compute_features(video)
         diff_features = self.deep_features_extractor.compute_features(rfd_video)
 
         ssa_features = self.ssa_features_computer.compute_ssa_features(video_features)
-        mcs_features = self.mcs_features_computer.compute_mcs_features(video_features)
+        mcs_features = self.mcs_features_computer.compute_mcs_features(video_features, num_context_frames)
         rfd_features = self.rfd_features_computer.compute_rfd_features(diff_features)
         return ssa_features, mcs_features, rfd_features
     

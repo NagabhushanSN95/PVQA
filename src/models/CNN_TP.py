@@ -2,7 +2,7 @@
 # Variable Length PVQA. Uses 1d conv and adaptive pooling along time dimension.
 # Features must be extracted before running this file
 # Author: Nagabhushan S N
-# Last Modified: 14-12-2021
+# Last Modified: 14/01/2022
 
 from pathlib import Path
 
@@ -34,11 +34,24 @@ class CnnTpModel(QaModel):
         self.kernel_size = configs['kernel_size']
         self.num_filters = configs['num_filters']
         self.num_epochs = configs['num_epochs']
-        self.num_frames = self.num_frames - self.kernel_size + 1
+        self.num_context_frames = configs['num_context_frames']
+        self.num_channels = self.get_num_channels(configs['backbone_network'])
 
         self.model = self.get_model()
         optimizer = Adam(lr=0.001)
         self.model.compile(optimizer=optimizer, loss='mse')
+
+    @staticmethod
+    def get_num_channels(backbone_network: str):
+        if backbone_network == 'ResNet50':
+            num_channels = 2048
+        elif backbone_network == 'VGG19':
+            num_channels = 512
+        elif backbone_network == 'InceptionV3':
+            num_channels = 2048
+        else:
+            raise RuntimeError(f'Unknown backbone network: {backbone_network}')
+        return num_channels
         
     def get_model(self):
         if self.features_name == 'SSA':
@@ -56,8 +69,8 @@ class CnnTpModel(QaModel):
         return model
     
     def get_ssa_model(self):
-        input_features = Input(shape=(20, 2048), name='input_features')
-        ssa_features = Lambda(lambda tensors: tensors[:, :20])(input_features)
+        input_features = Input(shape=(self.num_frames, self.num_channels), name='input_features')
+        ssa_features = Lambda(lambda tensors: tensors[:, :self.num_frames])(input_features)
 
         m1_out = Conv1D(filters=self.num_filters, kernel_size=self.kernel_size, activation='relu')(ssa_features)
         pooled_features = self.get_pooled_features(m1_out)
@@ -68,8 +81,8 @@ class CnnTpModel(QaModel):
         return model
     
     def get_mcs_model(self):
-        input_features = Input(shape=(20, 2048), name='input_features')
-        mcs_features = Lambda(lambda tensors: tensors[:, 4:20])(input_features)
+        input_features = Input(shape=(self.num_frames, self.num_channels), name='input_features')
+        mcs_features = Lambda(lambda tensors: tensors[:, self.num_context_frames:self.num_frames])(input_features)
 
         m1_out = Conv1D(filters=self.num_filters, kernel_size=self.kernel_size, activation='relu')(mcs_features)
         pooled_features = self.get_pooled_features(m1_out)
@@ -80,8 +93,8 @@ class CnnTpModel(QaModel):
         return model
     
     def get_rfd_model(self):
-        input_features = Input(shape=(20, 2048), name='input_features')
-        rfd_features = Lambda(lambda tensors: tensors[:, 1:20])(input_features)
+        input_features = Input(shape=(self.num_frames, self.num_channels), name='input_features')
+        rfd_features = Lambda(lambda tensors: tensors[:, 1:self.num_frames])(input_features)
 
         m1_out = Conv1D(filters=self.num_filters, kernel_size=self.kernel_size, activation='relu')(rfd_features)
         pooled_features = self.get_pooled_features(m1_out)
@@ -92,9 +105,9 @@ class CnnTpModel(QaModel):
         return model
     
     def get_ssa_rfd_model(self):
-        input_features = Input(shape=(40, 2048), name='input_features')
-        ssa_features = Lambda(lambda tensors: tensors[:, :20])(input_features)
-        rfd_features = Lambda(lambda tensors: tensors[:, 21:40])(input_features)
+        input_features = Input(shape=(2*self.num_frames, self.num_channels), name='input_features')
+        ssa_features = Lambda(lambda tensors: tensors[:, :self.num_frames])(input_features)
+        rfd_features = Lambda(lambda tensors: tensors[:, self.num_frames+1:2*self.num_frames])(input_features)
 
         m1_out = Conv1D(filters=self.num_filters, kernel_size=self.kernel_size, activation='relu')(ssa_features)
         m2_out = Conv1D(filters=self.num_filters, kernel_size=self.kernel_size, activation='relu')(rfd_features)
@@ -107,9 +120,9 @@ class CnnTpModel(QaModel):
         return model
     
     def get_mcs_rfd_model(self):
-        input_features = Input(shape=(40, 2048), name='input_features')
-        mcs_features = Lambda(lambda tensors: tensors[:, :20])(input_features)
-        rfd_features = Lambda(lambda tensors: tensors[:, 20:40])(input_features)
+        input_features = Input(shape=(2*self.num_frames, self.num_channels), name='input_features')
+        mcs_features = Lambda(lambda tensors: tensors[:, :self.num_frames])(input_features)
+        rfd_features = Lambda(lambda tensors: tensors[:, self.num_frames:2*self.num_frames])(input_features)
 
         m1_out = Conv1D(filters=self.num_filters, kernel_size=self.kernel_size, activation='relu')(mcs_features)
         m2_out = Conv1D(filters=self.num_filters, kernel_size=self.kernel_size, activation='relu')(rfd_features)
@@ -123,9 +136,10 @@ class CnnTpModel(QaModel):
     
     def get_pooled_features(self, features):
         pooled_features = []
+        num_frames = features.shape[1]
         for i in range(self.num_time_splits):
-            t1 = int(round(i * self.num_frames / self.num_time_splits))
-            t2 = int(round((i + 1) * self.num_frames / self.num_time_splits))
+            t1 = int(round(i * num_frames / self.num_time_splits))
+            t2 = int(round((i + 1) * num_frames / self.num_time_splits))
             pooled_feature_i = Lambda(lambda tensor: backend.mean(tensor[:, t1:t2], axis=1, keepdims=True))(features)
             pooled_features.append(pooled_feature_i)
         pooled_features = Lambda(lambda tensors: backend.concatenate(tensors, axis=1))(pooled_features)
@@ -174,5 +188,5 @@ class CnnTpModel(QaModel):
         features = self.configs['features']
         model_dirpath = self.configs['root_dirpath'] / self.configs['model_save_dirpath'] / f'{features}_{model_name}_{backbone_network}'
         model_path = model_dirpath / 'CNN_TP.h5'
-        self.model = keras.models.load_model(model_path)
+        self.model.load_weights(model_path.as_posix())
         return
