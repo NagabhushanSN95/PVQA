@@ -20,7 +20,7 @@ Our Model and Baseline Models pretrained on our database are available [here](ht
 3. To compute the quality score of a video whose features has been already computed, use the method `demo3()` in `src/Tester.py`.
 4. Since tensorflow updates the ResNet-50/VGG-19/Inception-v3 pretrained model weights with newer versions, if you use a different version of tensorflow in your setup, please train the PVQA model again instead of using the pretrained models.
 
-If you use our PVQA model in your publication, please specify the version you are using. The current version is 1.3.
+If you use our PVQA model in your publication, please specify the version you are using. The current version is 1.3.1.
 
 ## License
 Copyright 2020 Nagabhushan Somraj, Manoj Surya Kashi, S P Arun, Rajiv Soundararajan
