@@ -1,9 +1,9 @@
 # Shree KRISHNAya Namaha
-# Trains PVQA Models and saves the trained model
+# Trains PVQA Models on the provided features and saves the trained model
 # Features must be extracted before running this file
 # Author: Nagabhushan S N
-# Last Modified: 23-11-2021
-
+# Last Modified: 14-12-2021
+import json
 from pathlib import Path
 
 import joblib
@@ -13,16 +13,19 @@ import scipy.stats
 from sklearn.decomposition import PCA
 from sklearn.linear_model import LinearRegression
 
+from models.QA import QaModel
 
-class PvqaModel:
+
+class PcaLrModel(QaModel):
     """
     Defines train, test functions
     """
     model: LinearRegression
     pca: PCA
 
-    def __init__(self, num_components=240) -> None:
-        self.num_principal_components = num_components
+    def __init__(self, configs: dict) -> None:
+        self.configs = configs
+        self.num_principal_components = configs['num_principal_components']
         self.regressor = LinearRegression()
         self.pca = PCA(n_components=self.num_principal_components)
         return
@@ -70,11 +73,13 @@ class PvqaModel:
         joblib.dump(self.regressor, lr_save_path)
         return
 
-    @staticmethod
-    def load_model(model_dirpath: Path):
-        pvqa_model = PvqaModel()
+    def load_model(self):
+        backbone_network = self.configs['backbone_network']
+        model_name = self.configs['model_name']
+        features = self.configs['features']
+        model_dirpath = self.configs['root_dirpath'] / self.configs['model_save_dirpath'] / f'{features}_{model_name}_{backbone_network}'
         pca_save_path = model_dirpath / 'PCA.joblib'
         lr_save_path = model_dirpath / 'LinearRegression.joblib'
-        pvqa_model.pca = joblib.load(pca_save_path)
-        pvqa_model.regressor = joblib.load(lr_save_path)
-        return pvqa_model
+        self.pca = joblib.load(pca_save_path)
+        self.regressor = joblib.load(lr_save_path)
+        return

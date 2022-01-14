@@ -4,20 +4,23 @@ The database can be downloaded from the [project webpage](https://nagabhushansn9
 
 ## How to use:
 ### Training:
-1. Copy the videos to Data/Predicted_Videos directory
-2. Copy the MOS.csv file to Data/MOS.csv
-3. Run `FeatureExtractor.py` file to extract the features from the videos.
-4. Run `demo1()` method in `Train.py` file to train model. The trained model will be saved in `Trained_Models`.
-5. Additionally, `demo2()` method in `Train.py` can be used to evaluate the model on 100 splits and compute median scores of PLCC, SROCC and RMSE.
+1. Copy the videos to `Data/PVQA/Predicted_Videos` directory.
+2. Copy the `MOS.csv` file to `Data/PVQA/MOS.csv`.
+3. Run `src/feature_extractors/FeatureExtractor.py` file to extract the features from the videos.
+4. Run `demo1()` method in `src/Trainer.py` file to train model. The trained model will be saved in `Trained_Models/PVQA`.
+5. Additionally, `demo2()` method in `src/Trainer.py` can be used to evaluate the model on 100 splits and compute median scores of PLCC, SROCC and RMSE.
+6. To train on a different database, organize the videos and MOS similarly. Write a new data-loader for the new database (similar to `src/data_loaders/PVQA.py`) and change the training configs to use the new data-loader.
 
 ### Pretrained Models:
 Our Model and Baseline Models pretrained on our database are available [here](https://drive.google.com/drive/folders/16cxow_Yf4peFedHCXS8EyvZ07OQ9AMEm?usp=sharing).
 
 ### Testing:
-1. To compute the quality score of a single video, use `demo1()` method in `Test.py`, by specifying the path to the video.
-2. To compute the quality scores of multiple videos, place all the videos in a single directory and use the method `demo2()` in `Test.py`.
+1. To compute the quality score of a single video, use `demo1()` method in `src/Tester.py`, by specifying the path to the video.
+2. To compute the quality scores of multiple videos, place all the videos in a single directory and use the method `demo2()` in `src/Tester.py`.
+3. To compute the quality score of a video whose features has been already computed, use the method `demo3()` in `src/Tester.py`.
+4. Since tensorflow updates the ResNet-50/VGG-19/Inception-v3 pretrained model weights with newer versions, if you use a different version of tensorflow in your setup, please train the PVQA model again instead of using the pretrained models.
 
-If you use our PVQA model in your publication, please specify the version you are using. The current version is 1.2.
+If you use our PVQA model in your publication, please specify the version you are using. The current version is 1.3.
 
 ## License
 Copyright 2020 Nagabhushan Somraj, Manoj Surya Kashi, S P Arun, Rajiv Soundararajan

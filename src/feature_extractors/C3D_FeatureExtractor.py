@@ -46,8 +46,6 @@ def save_c3d_features(videos_dirpath: Path, model_path: Path, weights_path: Path
     """
     C3D features from last conv layer; Dimension: 2x7x7x512
     """
-
-    output_dirpath = output_dirpath / 'C3D'
     output_dirpath.mkdir(parents=True, exist_ok=False)
     c3d_model = C3D(model_path, weights_path)
     for video_path in tqdm(sorted(videos_dirpath.rglob('*.mp4'))):
@@ -60,10 +58,10 @@ def save_c3d_features(videos_dirpath: Path, model_path: Path, weights_path: Path
 
 def demo1():
     root_dirpath = Path('../../')
-    videos_dirpath = root_dirpath / 'Data/Predicted_Videos'
+    videos_dirpath = root_dirpath / 'Data/PVQA/Predicted_Videos'
     model_path = root_dirpath / 'Trained_Models/C3D/sports_1M.json'
     weights_path = root_dirpath / 'Trained_Models/C3D/sports1M_weights.h5'
-    output_dirpath = root_dirpath / 'Data/SSA_Features'
+    output_dirpath = root_dirpath / 'Data/PVQA/Features/C3D/SSA'
     save_c3d_features(videos_dirpath, model_path, weights_path, output_dirpath)
     return
 

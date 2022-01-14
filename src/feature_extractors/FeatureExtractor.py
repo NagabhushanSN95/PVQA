@@ -1,13 +1,14 @@
 # Shree KRISHNAya Namaha
-# Extracts MCS and RFD features
+# Extracts SSA, MCS and RFD features
 # Author: Nagabhushan S N
-# Last Modified: 18-11-2021
+# Last Modified: 13-12-2021
 
 import abc
 import datetime
 import time
 import traceback
 from pathlib import Path
+from typing import Tuple
 
 import numpy
 import skvideo.io
@@ -54,6 +55,13 @@ class InceptionV3FeatureExtractor(DeepFeaturesExtractor):
         preprocessed_video = preprocess_input(video)
         features = self.model.predict(preprocessed_video)
         return features
+
+
+class SsaFeaturesComputer:
+    @staticmethod
+    def compute_ssa_features(features: numpy.ndarray) -> numpy.ndarray:
+        ssa_features = numpy.mean(features, axis=(1, 2))
+        return ssa_features
 
 
 class McsFeaturesComputer:
@@ -138,6 +146,7 @@ class RfdFeaturesComputer:
 class PvqaFeaturesComputer:
     def __init__(self, backbone_network: str = 'ResNet50'):
         self.deep_features_extractor = self.get_deep_features_extractor(backbone_network)
+        self.ssa_features_computer = SsaFeaturesComputer()
         self.mcs_features_computer = McsFeaturesComputer()
         self.rfd_features_computer = RfdFeaturesComputer()
         return
@@ -154,16 +163,23 @@ class PvqaFeaturesComputer:
             raise RuntimeError(f'Unknown backbone network: {network}')
         return deep_features_extractor
 
-    def compute_pvqa_features(self, video: numpy.ndarray) -> numpy.ndarray:
+    def compute_pvqa_features(self, video: numpy.ndarray) -> Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]:
         rfd_video = self.rfd_features_computer.compute_rfd_video(video)
 
         video_features = self.deep_features_extractor.compute_features(video)
         diff_features = self.deep_features_extractor.compute_features(rfd_video)
 
+        ssa_features = self.ssa_features_computer.compute_ssa_features(video_features)
         mcs_features = self.mcs_features_computer.compute_mcs_features(video_features)
         rfd_features = self.rfd_features_computer.compute_rfd_features(diff_features)
-        all_features = numpy.concatenate([mcs_features, rfd_features], axis=0)
-        return all_features
+        return ssa_features, mcs_features, rfd_features
+    
+    
+def save_features(output_dirpath: Path, feature_name: str, video_name: str, features: numpy.ndarray):
+    output_filepath = output_dirpath / f'{feature_name}/{video_name}.npy'
+    output_filepath.parent.mkdir(parents=True, exist_ok=True)
+    numpy.save(output_filepath.as_posix(), features)
+    return 
 
 
 def extract_features(videos_dirpath: Path, backbone_network: str, output_dirpath: Path):
@@ -174,19 +190,25 @@ def extract_features(videos_dirpath: Path, backbone_network: str, output_dirpath
     for video_path in tqdm(sorted(videos_dirpath.iterdir())):
         video_name = video_path.stem
         video = skvideo.io.vread(video_path.as_posix())
-        all_features = features_computer.compute_pvqa_features(video)
-
-        output_filepath = output_dirpath / f'{video_name}.npy'
-        numpy.save(output_filepath.as_posix(), all_features)
+        ssa_features, mcs_features, rfd_features = features_computer.compute_pvqa_features(video)
+        
+        save_features(output_dirpath, 'SSA', video_name, ssa_features)
+        save_features(output_dirpath, 'MCS', video_name, mcs_features)
+        save_features(output_dirpath, 'RFD', video_name, rfd_features)
     print('Features computation complete')
     return
 
 
 def demo1():
     root_dirpath = Path('../../')
-    videos_dirpath = root_dirpath / 'Data/Predicted_Videos'
+    videos_dirpath = root_dirpath / 'Data/PVQA/Predicted_Videos'
+    output_dirpath = root_dirpath / 'Data/PVQA/Features'
+
     backbone_network = 'ResNet50'
-    output_dirpath = root_dirpath / 'Data/PVQA_Features'
+    extract_features(videos_dirpath, backbone_network, output_dirpath)
+    backbone_network = 'VGG19'
+    extract_features(videos_dirpath, backbone_network, output_dirpath)
+    backbone_network = 'InceptionV3'
     extract_features(videos_dirpath, backbone_network, output_dirpath)
     return
 
