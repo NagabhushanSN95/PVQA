@@ -44,11 +44,11 @@ If you use this code for your research, please cite our paper
 @article{somraj2020pvqa,
     title = {Understanding the Perceived Quality of Video Predictions},
     author = {Somraj, Nagabhushan and Kashi, Manoj Surya and Arun, S. P. and Soundararajan, Rajiv},
-    journal = {arXiv e-prints},
-    eid = {arXiv:2005.00356},
-    pages = {arXiv:2005.00356},
-    archivePrefix = {arXiv},
-    eprint = {2005.00356},
-    year = {2020}
+    journal = {Signal Processing: Image Communication},
+    volume = {102},
+    pages = {116626},
+    issn = {0923-5965},
+    year = {2022},
+    doi = {https://doi.org/10.1016/j.image.2021.116626}
 }
 ```
