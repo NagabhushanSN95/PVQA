@@ -1,7 +1,7 @@
 # Shree KRISHNAya Namaha
 # Runs the model and predicts quality scores
 # Author: Nagabhushan S N
-# Last Modified: 14-12-2021
+# Last Modified: 14/01/2022
 
 import datetime
 import json
@@ -84,7 +84,7 @@ def demo1():
     model.load_model()
 
     video = skvideo.io.vread(video_path.as_posix())
-    all_features = features_computer(video)
+    all_features = features_computer(video, train_configs['num_context_frames'])
     selected_features = select_features(all_features, train_configs['features'])
     score = model.predict(selected_features).squeeze()
     print(f'Predicted Quality Score: {score:0.04f}')
@@ -114,7 +114,7 @@ def demo2():
         video_name = video_path.stem
         start_time1 = time.time()
         video = skvideo.io.vread(video_path.as_posix())
-        all_features = features_computer(video)
+        all_features = features_computer(video, train_configs['num_context_frames'])
         selected_features = select_features(all_features, train_configs['features'])
         score = model.predict(selected_features)
         end_time1 = time.time()

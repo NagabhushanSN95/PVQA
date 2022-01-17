@@ -20,7 +20,7 @@ Our Model and Baseline Models pretrained on our database are available [here](ht
 3. To compute the quality score of a video whose features has been already computed, use the method `demo3()` in `src/Tester.py`.
 4. Since tensorflow updates the ResNet-50/VGG-19/Inception-v3 pretrained model weights with newer versions, if you use a different version of tensorflow in your setup, please train the PVQA model again instead of using the pretrained models.
 
-If you use our PVQA model in your publication, please specify the version you are using. The current version is 1.3.
+If you use our PVQA model in your publication, please specify the version you are using. The current version is 1.3.1.
 
 ## License
 Copyright 2020 Nagabhushan Somraj, Manoj Surya Kashi, S P Arun, Rajiv Soundararajan
@@ -44,11 +44,11 @@ If you use this code for your research, please cite our paper
 @article{somraj2020pvqa,
     title = {Understanding the Perceived Quality of Video Predictions},
     author = {Somraj, Nagabhushan and Kashi, Manoj Surya and Arun, S. P. and Soundararajan, Rajiv},
-    journal = {arXiv e-prints},
-    eid = {arXiv:2005.00356},
-    pages = {arXiv:2005.00356},
-    archivePrefix = {arXiv},
-    eprint = {2005.00356},
-    year = {2020}
+    journal = {Signal Processing: Image Communication},
+    volume = {102},
+    pages = {116626},
+    issn = {0923-5965},
+    year = {2022},
+    doi = {https://doi.org/10.1016/j.image.2021.116626}
 }
 ```
