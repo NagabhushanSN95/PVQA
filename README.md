@@ -12,7 +12,7 @@ The database can be downloaded from the [project webpage](https://nagabhushansn9
 6. To train on a different database, organize the videos and MOS similarly. Write a new data-loader for the new database (similar to `src/data_loaders/PVQA.py`) and change the training configs to use the new data-loader.
 
 ### Pretrained Models:
-Our Model and Baseline Models pretrained on our database are available [here](https://drive.google.com/drive/folders/16cxow_Yf4peFedHCXS8EyvZ07OQ9AMEm?usp=sharing).
+Our Model and Baseline Models pretrained on our database are available [here](https://indianinstituteofscience-my.sharepoint.com/:f:/g/personal/nagabhushans_iisc_ac_in/Emlsu0iYKPZFnSi5SCjl_5EBrXTA4sANTYISdxQ3LPfOxA?e=AGA661).
 
 ### Testing:
 1. To compute the quality score of a single video, use `demo1()` method in `src/Tester.py`, by specifying the path to the video.
